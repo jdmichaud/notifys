@@ -10,11 +10,6 @@
 #include "defines.h"
 #include "server.h"
 
-// #define APPEND_STR(format, parameters) \
-//   snprintf(response + strlen(response), \
-//     BUFFER_SIZE - strlen(response), \
-//     format, parameters);
-
 // Days of the week 3-letters abbreviations
 static const char dow[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 // Months of the year 3-letters abbreviations
