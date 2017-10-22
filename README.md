@@ -5,7 +5,7 @@ A notify server with an HTTP interface.
 # Compile
 
 ```bash
-cc -Wall -Wextra -Wpedantic main.c notify.c -o notifys
+cc -Wall -Wextra -Wpedantic main.c notify.c server.c -o notifys
 ```
 
 # Usage

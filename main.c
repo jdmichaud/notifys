@@ -71,8 +71,9 @@ int8_t watch(int32_t wfd, watched_path_t *wp, int32_t sfd) {
   struct pollfd fds[SOCKET_INDEX + 1];
   event_t events[MAX_SIMULTANEOUS_EVENTS];
   fd_list_t *client_fds = NULL;
+  install_fds(fds, wfd, sfd);
   while (1) {
-    install_fds(fds, wfd, sfd);
+    memset(events, 0, MAX_SIMULTANEOUS_EVENTS * sizeof (event_t));
     if (poll(fds, SOCKET_INDEX + 1, -1) <= 0) {
       if (errno == EINTR) {
         continue; // A signal unblocked poll, just ignore it
@@ -88,10 +89,16 @@ int8_t watch(int32_t wfd, watched_path_t *wp, int32_t sfd) {
       if (fds[NOTIFY_INDEX].revents & POLLIN) {
         int32_t nb_events = 0;
         if ((nb_events = parse_events(wfd, wp, events)) < 0) return ERROR;
-        // We don't manage multiple simultaneous events for now
-        for (fd_list_t *head = client_fds; head != NULL; head = client_fds) {
-          answer(head->fd, events[0].path, events[0].event);
-          remove_fd(&client_fds, head);
+        if (nb_events) {
+          // We don't manage multiple simultaneous events for now
+          for (fd_list_t *head = client_fds; head != NULL; head = client_fds) {
+            answer(head->fd, events[0].path, events[0].event);
+            remove_fd(&client_fds, head);
+          }
+          for (uint32_t i = nb_events; i != 0; --i) {
+            free(events[i].path);
+            free(events[i].event);
+          }
         }
       }
       if (fds[SOCKET_INDEX].revents & POLLIN) {
