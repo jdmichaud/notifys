@@ -1,4 +1,3 @@
-// cc -Wall -Wextra -Wpedantic main.c notify.c -o notifys
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
